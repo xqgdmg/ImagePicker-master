@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * 选择对话框
+ * 只有仿微信的时候弹出
  *
  * Author: nanchen
  * Email: liushilin520@foxmail.com
@@ -119,7 +120,7 @@ public class SelectDialog extends Dialog implements OnClickListener,OnItemClickL
         super.onCreate(savedInstanceState);
         View view = getLayoutInflater().inflate(R.layout.view_dialog_select,
                 null);
-        setContentView(view, new LayoutParams(LayoutParams.FILL_PARENT,
+        setContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT));
         Window window = getWindow();
         // 设置显示动画
@@ -150,7 +151,6 @@ public class SelectDialog extends Dialog implements OnClickListener,OnItemClickL
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 if(mCancelListener != null){
                     mCancelListener.onCancelClick(v);
                 }
@@ -190,19 +190,16 @@ public class SelectDialog extends Dialog implements OnClickListener,OnItemClickL
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return mStrings.size();
         }
 
         @Override
         public Object getItem(int position) {
-            // TODO Auto-generated method stub
             return mStrings.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            // TODO Auto-generated method stub
             return position;
         }
 

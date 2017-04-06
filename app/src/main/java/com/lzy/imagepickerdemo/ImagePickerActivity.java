@@ -38,7 +38,7 @@ import java.util.List;
  * 作    者：jeasonlzy（廖子尧 Github地址：https://github.com/jeasonlzy0216
  * 版    本：1.0
  * 创建日期：2016/5/19
- * 描    述：
+ * 描    述：总体来说用起来比较简单，裁剪只对单选有效
  * 修订历史：
  * ================================================
  */
@@ -70,7 +70,7 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
         setContentView(R.layout.activity_image_picker);
 
         imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new GlideImageLoader());
+        imagePicker.setImageLoader(new GlideImageLoader()); // 默认使用 Glide 加载图片
 
         rb_uil = (RadioButton) findViewById(R.id.rb_uil);
         rb_glide = (RadioButton) findViewById(R.id.rb_glide);
@@ -124,7 +124,9 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_open_gallery:
+            case R.id.btn_open_gallery:  // 打开相册
+
+                 // 选中加载图片的框架
                 if (rb_uil.isChecked()) imagePicker.setImageLoader(new UILImageLoader());
                 else if (rb_glide.isChecked()) imagePicker.setImageLoader(new GlideImageLoader());
                 else if (rb_picasso.isChecked())
@@ -134,9 +136,11 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
                     imagePicker.setImageLoader(new XUtils3ImageLoader());
                 else if (rb_xutils.isChecked()) imagePicker.setImageLoader(new GlideImageLoader());
 
+                 // 设置单选或者是多选
                 if (rb_single_select.isChecked()) imagePicker.setMultiMode(false);
                 else if (rb_muti_select.isChecked()) imagePicker.setMultiMode(true);
 
+                 // 裁剪选项
                 if (rb_crop_square.isChecked()) {
                     imagePicker.setStyle(CropImageView.Style.RECTANGLE);
                     Integer width = Integer.valueOf(et_crop_width.getText().toString());
@@ -153,13 +157,16 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
                     imagePicker.setFocusHeight(radius * 2);
                 }
 
+                 // 保存图片的宽高
                 imagePicker.setOutPutX(Integer.valueOf(et_outputx.getText().toString()));
                 imagePicker.setOutPutY(Integer.valueOf(et_outputy.getText().toString()));
 
+                 // 重点是调到图片选择的 Act
                 Intent intent = new Intent(this, ImageGridActivity.class);
                 startActivityForResult(intent, 100);
                 break;
-            case R.id.btn_wxDemo:
+
+            case R.id.btn_wxDemo: // 仿微信
                 startActivity(new Intent(this, WxDemoActivity.class));
                 break;
         }
@@ -168,13 +175,13 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
-            case R.id.cb_show_camera:
+            case R.id.cb_show_camera: // 是否在照片列表中显示从相机拍摄
                 imagePicker.setShowCamera(isChecked);
                 break;
-            case R.id.cb_crop:
+            case R.id.cb_crop: // 是否裁剪
                 imagePicker.setCrop(isChecked);
                 break;
-            case R.id.cb_isSaveRectangle:
+            case R.id.cb_isSaveRectangle: // 是否按照矩形
                 imagePicker.setSaveRectangle(isChecked);
                 break;
         }
@@ -183,7 +190,7 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         tv_select_limit.setText(String.valueOf(progress));
-        imagePicker.setSelectLimit(progress);
+        imagePicker.setSelectLimit(progress); // 设置选中的图片总数量
     }
 
     @Override
@@ -194,6 +201,7 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
 
+     // 返回图片的路径，在 GV 中显示
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -208,6 +216,9 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
         }
     }
 
+    /**
+     *  没有布局的 Adapter
+     * */
     private class MyAdapter extends BaseAdapter {
 
         private List<ImageItem> items;
@@ -241,12 +252,12 @@ public class ImagePickerActivity extends AppCompatActivity implements SeekBar.On
             ImageView imageView;
             int size = gridView.getWidth() / 3;
             if (convertView == null) {
-                imageView = new ImageView(ImagePickerActivity.this);
-                AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, size);
+                imageView = new ImageView(ImagePickerActivity.this); // 孩子
+                AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, size); // 父亲指定布局参数
                 imageView.setLayoutParams(params);
                 imageView.setBackgroundColor(Color.parseColor("#88888888"));
             } else {
-                imageView = (ImageView) convertView;
+                imageView = (ImageView) convertView; // 这个就比较6了
             }
             imagePicker.getImageLoader().displayImage(ImagePickerActivity.this, getItem(position).path, imageView, size, size);
             return imageView;

@@ -15,6 +15,7 @@
         android:id="@+id/top_bar"
         layout="@layout/include_top_bar"/>
 
+    <!-- 底部的选择，居然还有原图大小 -->
     <RelativeLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
@@ -35,7 +36,7 @@
             android:textColor="#FFF"/>
 
         <com.lzy.imagepicker.view.SuperCheckBox
-            android:id="@+id/cb_check"
+            android:id="@+id/cb_check_bottom"
             style="@style/SuperCheckboxTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

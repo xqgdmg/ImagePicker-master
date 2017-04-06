@@ -121,6 +121,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
 
         onImageSelected(0, null, false);
 
+         // 6.0 权限的处理
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 new ImageDataSource(this, null, this);
@@ -128,6 +129,12 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mRecyclerAdapter.notifyDataSetChanged(); // 可见即刷新,防止 选中 cb 状态不能及时更新
     }
 
     @Override
@@ -203,7 +210,6 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 mFolderPopupWindow.dismiss();
                 ImageFolder imageFolder = (ImageFolder) adapterView.getAdapter().getItem(position);
                 if (null != imageFolder) {
-//                    mImageGridAdapter.refreshData(imageFolder.images);
                     mRecyclerAdapter.refreshData(imageFolder.images);
                     mBtnDir.setText(imageFolder.name);
                 }
@@ -218,15 +224,11 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         this.mImageFolders = imageFolders;
         imagePicker.setImageFolders(imageFolders);
         if (imageFolders.size() == 0) {
-//            mImageGridAdapter.refreshData(null);
             mRecyclerAdapter.refreshData(null);
         }
         else{
-//            mImageGridAdapter.refreshData(imageFolders.get(0).images);
             mRecyclerAdapter.refreshData(imageFolders.get(0).images);
         }
-//        mImageGridAdapter.setOnImageItemClickListener(this);
-//        mGridView.setAdapter(mImageGridAdapter);
         mRecyclerAdapter.setOnImageItemClickListener(this);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this,3));
         mRecyclerView.setAdapter(mRecyclerAdapter);
@@ -237,7 +239,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     public void onImageItemClick(View view, ImageItem imageItem, int position) {
         //根据是否有相机按钮确定位置
         position = imagePicker.isShowCamera() ? position - 1 : position;
-        if (imagePicker.isMultiMode()) {
+        if (imagePicker.isMultiMode()) { // 多选
             Intent intent = new Intent(ImageGridActivity.this, ImagePreviewActivity.class);
             intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
 
@@ -254,7 +256,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
             DataHolder.getInstance().save(DataHolder.DH_CURRENT_IMAGE_FOLDER_ITEMS, imagePicker.getCurrentImageFolderItems());
             intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
             startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);  //如果是多选，点击图片进入预览界面
-        } else {
+        } else { // 单选
             imagePicker.clearSelectedImages();
             imagePicker.addSelectedImageItem(position, imagePicker.getCurrentImageFolderItems().get(position), true);
             if (imagePicker.isCrop()) {

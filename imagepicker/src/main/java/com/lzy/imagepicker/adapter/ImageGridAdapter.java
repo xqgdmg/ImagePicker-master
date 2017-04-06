@@ -169,7 +169,7 @@ public class ImageGridAdapter extends BaseAdapter {
             rootView = view;
             ivThumb = (ImageView) view.findViewById(R.id.iv_thumb);
             mask = view.findViewById(R.id.mask);
-            cbCheck = (SuperCheckBox) view.findViewById(R.id.cb_check);
+            cbCheck = (SuperCheckBox) view.findViewById(R.id.cb_check_bottom);
         }
     }
 

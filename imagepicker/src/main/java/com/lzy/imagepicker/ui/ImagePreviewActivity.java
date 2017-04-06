@@ -21,7 +21,8 @@ import com.lzy.imagepicker.view.SuperCheckBox;
  * 作    者：jeasonlzy（廖子尧 Github地址：https://github.com/jeasonlzy0216
  * 版    本：1.0
  * 创建日期：2016/5/19
- * 描    述：
+ * 描    述：存在底部勾选之后，不能及时更新数据的问题
+ *           单选底部无勾选cb
  * 修订历史：
  * ================================================
  */
@@ -30,7 +31,7 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
     public static final String ISORIGIN = "isOrigin";
 
     private boolean isOrigin;                      //是否选中原图
-    private SuperCheckBox mCbCheck;                //是否选中当前图片的CheckBox
+    private SuperCheckBox mCbCheckBottom;                //是否选中当前图片的CheckBox
     private SuperCheckBox mCbOrigin;               //原图
     private Button mBtnOk;                         //确认图片的选择
     private View bottomBar;
@@ -42,14 +43,14 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
         imagePicker.addOnImageSelectedListener(this);
 
-        mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
+        mBtnOk = (Button) topBar.findViewById(R.id.btn_ok); // 完成
         mBtnOk.setVisibility(View.VISIBLE);
         mBtnOk.setOnClickListener(this);
 
-        bottomBar = findViewById(R.id.bottom_bar);
+        bottomBar = findViewById(R.id.bottom_bar); // 底部的 cb，如选择（或者原图吊销）
         bottomBar.setVisibility(View.VISIBLE);
 
-        mCbCheck = (SuperCheckBox) findViewById(R.id.cb_check);
+        mCbCheckBottom = (SuperCheckBox) findViewById(R.id.cb_check_bottom); // 底部选择
         mCbOrigin = (SuperCheckBox) findViewById(R.id.cb_origin);
         mCbOrigin.setText(getString(R.string.origin));
         mCbOrigin.setOnCheckedChangeListener(this);
@@ -60,7 +61,7 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         ImageItem item = mImageItems.get(mCurrentPosition);
         boolean isSelected = imagePicker.isSelect(item);
         mTitleCount.setText(getString(R.string.preview_image_count, mCurrentPosition + 1, mImageItems.size()));
-        mCbCheck.setChecked(isSelected);
+        mCbCheckBottom.setChecked(isSelected);
         //滑动ViewPager的时候，根据外界的数据改变当前的选中状态和当前的图片的位置描述文本
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -68,21 +69,23 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
                 mCurrentPosition = position;
                 ImageItem item = mImageItems.get(mCurrentPosition);
                 boolean isSelected = imagePicker.isSelect(item);
-                mCbCheck.setChecked(isSelected);
+                mCbCheckBottom.setChecked(isSelected);
                 mTitleCount.setText(getString(R.string.preview_image_count, mCurrentPosition + 1, mImageItems.size()));
             }
         });
         //当点击当前选中按钮的时候，需要根据当前的选中状态添加和移除图片
-        mCbCheck.setOnClickListener(new View.OnClickListener() {
+        mCbCheckBottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ImageItem imageItem = mImageItems.get(mCurrentPosition);
                 int selectLimit = imagePicker.getSelectLimit();
-                if (mCbCheck.isChecked() && selectedImages.size() >= selectLimit) {
+                if (mCbCheckBottom.isChecked() && selectedImages.size() >= selectLimit) {
                     Toast.makeText(ImagePreviewActivity.this, ImagePreviewActivity.this.getString(R.string.select_limit, selectLimit), Toast.LENGTH_SHORT).show();
-                    mCbCheck.setChecked(false);
+                    mCbCheckBottom.setChecked(false);
                 } else {
-                    imagePicker.addSelectedImageItem(mCurrentPosition, imageItem, mCbCheck.isChecked());
+                    imagePicker.addSelectedImageItem(mCurrentPosition, imageItem, mCbCheckBottom.isChecked());
+                     // 感觉少了一个通知图片列表Act刷新的方法,或者是这个页面点击返回的时候，列表页面可见的时候自动刷新，已在 onresume 中刷新 adapter
+
                 }
             }
         });

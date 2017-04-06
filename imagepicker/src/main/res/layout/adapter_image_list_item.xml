@@ -19,7 +19,7 @@
         android:visibility="gone"/>
 
     <com.lzy.imagepicker.view.SuperCheckBox
-        android:id="@+id/cb_check"
+        android:id="@+id/cb_check_bottom"
         style="@style/SuperCheckboxTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

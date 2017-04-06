@@ -133,7 +133,7 @@ public class ImageRecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             rootView = itemView;
             ivThumb = (ImageView) itemView.findViewById(R.id.iv_thumb);
             mask = itemView.findViewById(R.id.mask);
-            cbCheck = (SuperCheckBox) itemView.findViewById(R.id.cb_check);
+            cbCheck = (SuperCheckBox) itemView.findViewById(R.id.cb_check_bottom);
             itemView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mImageSize)); //让图片是个正方形
         }
 

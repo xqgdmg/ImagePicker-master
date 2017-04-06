@@ -19,7 +19,7 @@ import org.xutils.x;
  * 修订历史：
  * ================================================
  */
-public class GApp extends Application {
+public class MyApplication extends Application {
 
     public static DisplayImageOptions imageLoaderOptions = new DisplayImageOptions.Builder()//
             .showImageOnLoading(R.mipmap.default_image)         //设置图片在下载期间显示的图片
@@ -42,6 +42,6 @@ public class GApp extends Application {
         ImageLoaderConfiguration config = ImageLoaderConfiguration.createDefault(this);
 
         ImageLoader.getInstance().init(config);     //UniversalImageLoader初始化
-        x.Ext.init(this);                           //xUtils3初始化
+        x.Ext.init(this);                           //xUtils3 初始化
     }
 }
